@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css" />
+    <style>
+        html,
+        body,
+        #container {
+            width: 100%;
+            height: 100%;
+        }
+
+        .amap-icon img {
+            width: 25px;
+            height: 25px;
+        }
+    </style>
+    <title>We-Maps</title>
+</head>
+
+<body>
+<div id="container"></div>
+<script src="https://webapi.amap.com/maps?v=1.4.10&key=f393f3131f6d9ca2c4788ef479d54149"></script>
+<script src="https://a.amap.com/jsapi_demos/static/demo-center/js/demoutils.js"></script>
+<script>
+    var map = new AMap.Map('container', {
+        center: [103.724386, 36.107072],
+        layers: [
+            new AMap.TileLayer.Satellite(),
+            new AMap.TileLayer.RoadNet()
+        ],
+        zooms: [4,18],
+        zoom: 17
+    });
+
+    var markers = [];
+    var positions = [[103.724386, 36.107072], [103.724386, 36.106075],[103.724386, 36.106069],[103.724386, 36.106045]];
+
+
+    map.on("complete", function(){
+        log.success("Сomplete loading map！");
+    });
+
+    for (var i = 0, marker; i < positions.length; i++) {
+        marker = new AMap.Marker({
+            map: map,
+            position: positions[i],
+            icon: 'qr-code.png',
+            offset: new AMap.Pixel(-13, -30)
+        });
+        markers.push(marker);
+    }
+
+</script>
+</body>
+
+</html>
+
