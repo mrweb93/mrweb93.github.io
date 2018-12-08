@@ -1,16 +1,16 @@
 <!doctype html>
-<html lang="zh-CN" xmlns="http://www.w3.org/1999/html">
+<html lang="zh-CN">
 
 <head>
 
     <base href="//webapi.amap.com/ui/1.0/ui/misc/MarkerList/examples/" />
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
-    <title>WeMap</title>
+    <title>孟君善</title>
     <link rel="stylesheet" type="text/css" href="./common.css">
     <style>
-        #my-list li {
-            cursor: default;
+        .my-marker .amap-simple-marker-label {
+            color: #fff;
         }
     </style>
 </head>
@@ -21,7 +21,7 @@
     </div>
     <div id="panel">
         <div id="intro">
-            <h3>List Place</h3>
+            <h3>建筑清单</h3>
         </div>
         <ul id="my-list"></ul>
     </div>
@@ -35,133 +35,141 @@
         center: [103.724386, 36.107072],
         zooms: [4,18],
         zoom: 17,
-        pitch:75,
+        pitch:0,
         viewMode:'3D'
     });
 
-    var markers = [];
-    var positions = [[103.724386, 36.107072], [103.724386, 36.106075],[103.724386, 36.106069],[103.724386, 36.106045]];
-
-
-    for (var i = 0, marker; i < positions.length; i++) {
-        marker = new AMap.Marker({
-            map: map,
-            position: positions[i],
-            icon: 'img/d.png',
-            offset: new AMap.Pixel(-13, -30)
-        });
-        markers.push(marker);
-    }
-    map.plugin(["AMap.ToolBar"], function() {
-        map.addControl(new AMap.ToolBar());
+    AMap.plugin('AMap.ToolBar',function(){//异步加载插件
+        var toolbar = new AMap.ToolBar();
+        map.addControl(toolbar);
     });
 
+    AMapUI.loadUI(['misc/MarkerList', 'overlay/SimpleMarker', 'overlay/SimpleInfoWindow'],
+        function(MarkerList, SimpleMarker, SimpleInfoWindow) {
 
-    AMapUI.loadUI(['misc/MarkerList'], function(MarkerList) {
+            var markerList = new MarkerList({
 
-        var markerList = new MarkerList({
+                map: map,
 
-            map: map,
-
-            listContainer: 'my-list',
-
-            selectedClassNames: 'selected',
-
-            makeSelectedEvents: null,
-
-            listElementEvents: ['click'],
-
-            getDataId: function(dataItem, index) {
-
-                return dataItem.id;
-            },
-
-            getPosition: function(dataItem) {
-                return dataItem.position;
-            },
-
-            getMarker: function(dataItem, context, recycledMarker) {
+                listContainer: 'my-list',
 
 
-                var content = 'Build: ' + (context.index + 1) + '';
+                getDataId: function(dataItem, index) {
 
-                var label = {
-                    offset: new AMap.Pixel(16, 18),
-                    content: content
-                };
+                    return dataItem.id;
+                },
+
+                getPosition: function(dataItem) {
+                    return dataItem.position;
+                },
+
+                getMarker: function(dataItem, context, recycledMarker) {
 
 
-                if (recycledMarker) {
+                    if (recycledMarker) {
 
-                    recycledMarker.setLabel(label);
-                    return recycledMarker;
+                        recycledMarker.setIconLabel(context.id);
+                        recycledMarker.setIconStyle(dataItem.iconStyle);
+                        return recycledMarker;
+                    }
+
+
+                    return new SimpleMarker({
+                        containerClassNames: 'my-marker',
+                        iconStyle: dataItem.iconStyle,
+                        iconLabel: context.id
+                    });
+                },
+
+                getInfoWindow: function(dataItem, context, recycledInfoWindow) {
+
+                    if (recycledInfoWindow) {
+
+                        recycledInfoWindow.setInfoTitle(dataItem.title);
+                        recycledInfoWindow.setInfoBody(dataItem.desc);
+                        return recycledInfoWindow;
+                    }
+
+
+                    return new SimpleInfoWindow({
+                        offset: new AMap.Pixel(0, -37),
+                        infoTitle: dataItem.title,
+                        infoBody: dataItem.desc
+                    });
+                },
+                getListElement: function(dataItem, context, recycledListElement) {
+
+                    var tpl = '<button style="background-color:<%= dataItem.iconStyle %>">' +
+                        '<%- dataId %></button> <%- dataItem.title %>';
+
+                    var content = MarkerList.utils.template(tpl, {
+                        dataItem: dataItem,
+                        dataId: context.id
+                    });
+
+                    if (recycledListElement) {
+
+                        recycledListElement.innerHTML = content;
+                        return recycledListElement;
+                    }
+
+
+                    return '<li>' + content + '</li>';
                 }
 
+            });
 
-                return new AMap.Marker({
-                    label: label
-                });
+
+            var data = [{
+                id: 'A',
+                position: [103.724373, 36.110007],
+                iconStyle: 'red',
+                title: '超市',
+                desc: '超市离旅馆不远。超市在旅馆西边。'
+            }, {
+                id: 'B',
+                position: [103.722909, 36.110733],
+                iconStyle: 'green',
+                title: '油爆',
+                desc: '离油爆不远有超市二百米。'
+            }, {
+                id: 'C',
+                position: [103.724524, 36.109780],
+                iconStyle: 'purple',
+                title: '银行',
+                desc: '银行离旅馆不远。'
             },
+            {
+                id: 'D',
+                position: [103.721587,36.102243],
+                iconStyle: 'blue',
+                title: '酒吧',
+                desc: '酒吧在南边。离酒吧不远有大门二十米'
+            },
+            {
+                id: 'E',
+                position: [103.721469,36.103031],
+                iconStyle: 'orange',
+                title: '公车站',
+                desc: '公车站在南边。公车站不远有大门十米'
+            },
+            {
+                id: 'F',
+                position: [103.732582, 36.101893],
+                iconStyle: 'pink',
+                title: '医院',
+                desc: '医院离大门不远。 医院在东边。'
+            },
+            {
+                 id: 'G',
+                 position: [103.72700,36.1094062],
+                 iconStyle: 'black',
+                 title: '旅馆',
+                 desc: '旅馆在大门北东边。'
+            }];
 
-            getListElement: function(dataItem, context, recycledListElement) {
-
-                var tpl = '<img src="http://qrcoder.ru/code/?19%2C+88+West+Anning+Road%2C+Lanzhou%2C+Gansu%2C+post+code+730070%26%2365306%3BSchool+of+International+Education+and+Dormitory+for+International+Students&2&0"><p><%- dataItem.id %>：<%- dataItem.desc %><br/>' +
-                    '<p><button class="my-btn">Push</button>';
-
-                var content = MarkerList.utils.template(tpl, {
-                    dataItem: dataItem,
-                    dataIndex: context.index
-                });
-
-                if (recycledListElement) {
-
-                    recycledListElement.innerHTML = content;
-                    return recycledListElement;
-                }
-
-                return '<li>' + content + '</li>';
-            }
-
+            markerList.render(data);
         });
-
-        markerList.on('listElementClick', function(event, record) {
-
-            var $ = markerList.utils.$;
-
-
-            if ($(event.target).hasClass('my-btn')) {
-
-                this.selectByDataId(record.id);
-
-            } else {
-
-                this.openInfoWindowOnRecord(record);
-            }
-        });
-
-        markerList.on('selectedChanged', function(event, info) {
-
-        });
-
-        var data = [{
-            id: 'School of International Education and Dormitory for International Students',
-            position: [103.728992, 36.109406],
-            icon: 'img/icon.jpg'
-        }, {
-            id: 'B',
-            position: [103.724524, 36.109780],
-            desc: 'Construction Bank',
-            icon: 'img/qr-code.png'
-        }, {
-            id: 'C',
-            position: [103.723580, 36.110102],
-            desc: 'Students Cafeteria',
-            icon: 'img/qr-code.png'
-        }];
-
-        markerList.render(data);
-    });
-
     AMap.plugin('AMap.Geolocation', function() {
         var geolocation = new AMap.Geolocation({
             enableHighAccuracy: true,
@@ -188,7 +196,7 @@
         str.push('定位类别：' + data.location_type);
         if(data.accuracy){
             str.push('精度：' + data.accuracy + ' 米');
-        }
+        }//如为IP精确定位结果则没有精度信息
         str.push('是否经过偏移：' + (data.isConverted ? '是' : '否'));
         document.getElementById('result').innerHTML = str.join('<br>');
     }
@@ -197,8 +205,6 @@
         document.getElementById('status').innerHTML='定位失败'
         document.getElementById('result').innerHTML = '失败原因排查信息:'+data.message;
     }
-
-
 </script>
 </body>
 
