@@ -5,23 +5,35 @@
 
     <base href="//webapi.amap.com/ui/1.0/ui/misc/MarkerList/examples/" />
     <meta charset="utf-8">
-    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-widjquery-3.0.0.min.jsth">
     <title>孟君善</title>
     <link rel="stylesheet" type="text/css" href="./common.css">
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
     <style>
         .my-marker .amap-simple-marker-label {
             color: #fff;
+        }
+        .button {
+            background-color: #4CAF50; /* Green */
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
         }
     </style>
 </head>
 
 <body>
+<div id="container">
+</div>
 <div id="outer-box">
-    <div id="container">
-    </div>
+
     <div id="panel">
-        <div id="intro">
-            <h3>建筑清单</h3>
+        <div id="intro" >
+            <h3><button class="button">建筑清单</button></h3>
         </div>
         <ul id="my-list"></ul>
     </div>
@@ -30,12 +42,17 @@
 
 <script src="//webapi.amap.com/ui/1.0/main.js?v=1.0.11"></script>
 <script type="text/javascript">
+    $( "button" ).click(function() {
+        $( "ul" ).toggle();
+    });
+</script>
+<script type="text/javascript">
 
     var map = new AMap.Map('container', {
         center: [103.724386, 36.107072],
         zooms: [4,18],
         zoom: 17,
-        pitch:0,
+        pitch:75,
         viewMode:'3D'
     });
 
