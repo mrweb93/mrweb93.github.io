@@ -1,192 +1,67 @@
 <!doctype html>
-<html lang="zh-CN">
+<html>
 
 <head>
-
-    <base href="//webapi.amap.com/ui/1.0/ui/misc/MarkerList/examples/" />
     <meta charset="utf-8">
-    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-widjquery-3.0.0.min.jsth">
-    <title>孟君善</title>
-    <link rel="stylesheet" type="text/css" href="./common.css">
-    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css" />
     <style>
-        .my-marker .amap-simple-marker-label {
-            color: #fff;
+        html,
+        body,
+        #container {
+            width: 100%;
+            height: 100%;
         }
-        .button {
-            background-color: #4CAF50; /* Green */
-            border: none;
-            color: white;
-            padding: 15px 32px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
+
+        .amap-icon img {
+            width: 57px;
+            height: 57px;
+        }
+        p.my-desc {
+            margin: 5px 0;
+            line-height: 150%;
         }
     </style>
+    <title>We-Maps</title>
 </head>
 
 <body>
-<div id="container">
-</div>
-<div id="outer-box">
+<div id="container"></div>
+<script src="https://webapi.amap.com/maps?v=1.4.10&key=f393f3131f6d9ca2c4788ef479d54149"></script>
+<script src="https://a.amap.com/jsapi_demos/static/demo-center/js/demoutils.js"></script>
 
-    <div id="panel">
-        <div id="intro" >
-            <h3><button class="button">建筑清单</button></h3>
-        </div>
-        <ul id="my-list"></ul>
-    </div>
-</div>
-<script type="text/javascript" src='//webapi.amap.com/maps?v=1.4.11&key=f393f3131f6d9ca2c4788ef479d54149'></script>
-
-<script src="//webapi.amap.com/ui/1.0/main.js?v=1.0.11"></script>
-<script type="text/javascript">
-    $( "button" ).click(function() {
-        $( "ul" ).toggle();
-    });
-</script>
-<script type="text/javascript">
-
+<script>
     var map = new AMap.Map('container', {
         center: [103.724386, 36.107072],
-        zooms: [4,18],
+        zooms: [4,30],
         zoom: 17,
         pitch:75,
         viewMode:'3D'
     });
 
-    AMap.plugin('AMap.ToolBar',function(){//异步加载插件
-        var toolbar = new AMap.ToolBar();
-        map.addControl(toolbar);
+    map.plugin(["AMap.ToolBar"], function() {
+        map.addControl(new AMap.ToolBar());
     });
 
-    AMapUI.loadUI(['misc/MarkerList', 'overlay/SimpleMarker', 'overlay/SimpleInfoWindow'],
-        function(MarkerList, SimpleMarker, SimpleInfoWindow) {
-
-            var markerList = new MarkerList({
-
-                map: map,
-
-                listContainer: 'my-list',
+    var markers = [];
+    var positions = [[103.724386, 36.107072], [103.724386, 36.106075],[103.724386, 36.106069],[103.724386, 36.106045]];
 
 
-                getDataId: function(dataItem, index) {
+    map.on("complete", function(){
+        log.success("Сomplete loading map！");
+    });
 
-                    return dataItem.id;
-                },
-
-                getPosition: function(dataItem) {
-                    return dataItem.position;
-                },
-
-                getMarker: function(dataItem, context, recycledMarker) {
-
-
-                    if (recycledMarker) {
-
-                        recycledMarker.setIconLabel(context.id);
-                        recycledMarker.setIconStyle(dataItem.iconStyle);
-                        return recycledMarker;
-                    }
-
-
-                    return new SimpleMarker({
-                        containerClassNames: 'my-marker',
-                        iconStyle: dataItem.iconStyle,
-                        iconLabel: context.id
-                    });
-                },
-
-                getInfoWindow: function(dataItem, context, recycledInfoWindow) {
-
-                    if (recycledInfoWindow) {
-
-                        recycledInfoWindow.setInfoTitle(dataItem.title);
-                        recycledInfoWindow.setInfoBody(dataItem.desc);
-                        return recycledInfoWindow;
-                    }
-
-
-                    return new SimpleInfoWindow({
-                        offset: new AMap.Pixel(0, -37),
-                        infoTitle: dataItem.title,
-                        infoBody: dataItem.desc
-                    });
-                },
-                getListElement: function(dataItem, context, recycledListElement) {
-
-                    var tpl = '<button style="background-color:<%= dataItem.iconStyle %>">' +
-                        '<%- dataId %></button> <%- dataItem.title %>';
-
-                    var content = MarkerList.utils.template(tpl, {
-                        dataItem: dataItem,
-                        dataId: context.id
-                    });
-
-                    if (recycledListElement) {
-
-                        recycledListElement.innerHTML = content;
-                        return recycledListElement;
-                    }
-
-
-                    return '<li>' + content + '</li>';
-                }
-
-            });
-
-
-            var data = [{
-                id: 'A',
-                position: [103.724373, 36.110007],
-                iconStyle: 'red',
-                title: '超市',
-                desc: '超市离旅馆不远。超市在旅馆西边。'
-            }, {
-                id: 'B',
-                position: [103.722909, 36.110733],
-                iconStyle: 'green',
-                title: '油爆',
-                desc: '离油爆不远有超市二百米。'
-            }, {
-                id: 'C',
-                position: [103.724524, 36.109780],
-                iconStyle: 'purple',
-                title: '银行',
-                desc: '银行离旅馆不远。'
-            },
-            {
-                id: 'D',
-                position: [103.721587,36.102243],
-                iconStyle: 'blue',
-                title: '酒吧',
-                desc: '酒吧在南边。离酒吧不远有大门二十米'
-            },
-            {
-                id: 'E',
-                position: [103.721469,36.103031],
-                iconStyle: 'orange',
-                title: '公车站',
-                desc: '公车站在南边。公车站不远有大门十米'
-            },
-            {
-                id: 'F',
-                position: [103.732582, 36.101893],
-                iconStyle: 'pink',
-                title: '医院',
-                desc: '医院离大门不远。 医院在东边。'
-            },
-            {
-                 id: 'G',
-                 position: [103.72700,36.1094062],
-                 iconStyle: 'black',
-                 title: '旅馆',
-                 desc: '旅馆在大门北东边。'
-            }];
-
-            markerList.render(data);
+    for (var i = 0, marker; i < positions.length; i++) {
+        marker = new AMap.Marker({
+            map: map,
+            position: positions[i],
+            icon: 'icon.jpg',
+            offset: new AMap.Pixel(-26, -60)
         });
+        markers.push(marker);
+    }
+
     AMap.plugin('AMap.Geolocation', function() {
         var geolocation = new AMap.Geolocation({
             enableHighAccuracy: true,
@@ -213,7 +88,7 @@
         str.push('定位类别：' + data.location_type);
         if(data.accuracy){
             str.push('精度：' + data.accuracy + ' 米');
-        }//如为IP精确定位结果则没有精度信息
+        }
         str.push('是否经过偏移：' + (data.isConverted ? '是' : '否'));
         document.getElementById('result').innerHTML = str.join('<br>');
     }
@@ -222,7 +97,24 @@
         document.getElementById('status').innerHTML='定位失败'
         document.getElementById('result').innerHTML = '失败原因排查信息:'+data.message;
     }
+
 </script>
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript" >
+    (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+    m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+    (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+ 
+    ym(51874394, "init", {
+         id:51874394,
+         clickmap:true,
+         trackLinks:true,
+         accurateTrackBounce:true
+    });
+ </script>
+ <noscript><div><img src="https://mc.yandex.ru/watch/51874394" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+ <!-- /Yandex.Metrika counter -->
 </body>
 
 </html>
+
