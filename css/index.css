@@ -13,3 +13,23 @@ body,
  #my-list li {
      cursor: default;
  }
+ #my-list li.my-active {
+    background: blue;
+    color: #fff;
+}
+/**
+ * 非选中时不显示label
+ */
+
+.amap-marker-label {
+    display: none;
+}
+/**
+ * 选中时的label样式
+ */
+
+.amap-marker.my-active .amap-marker-label {
+    display: block;
+    background: blue;
+    color: #fff;
+}
