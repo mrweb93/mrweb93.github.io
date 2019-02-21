@@ -84,6 +84,7 @@
         log.success("Сomplete loading map！");
     });
 
+var content = '标注:';
 
 //Заполнение маркеров
 var path="code_";
@@ -96,6 +97,7 @@ var png=".png";
             position: positions[i],
             icon: path+(i+1)+png,
             offset: new AMap.Pixel(-26, -60)
+           // content: content
         });
         markers.push(marker);
        }
