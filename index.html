@@ -90,13 +90,15 @@ var path="code_";
 var png=".png";
 
     for (var i = 0, marker; i < positions.length; i++) {
-        marker = new AMap.Marker({
+       if (i!=12)
+       { marker = new AMap.Marker({
             map: map,
             position: positions[i],
             icon: path+(i+1)+png,
             offset: new AMap.Pixel(-26, -60)
         });
         markers.push(marker);
+       }
     }
 
 //Заполнение маркеров
